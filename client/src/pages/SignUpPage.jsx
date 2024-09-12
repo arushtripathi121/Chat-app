@@ -6,15 +6,33 @@ const SignUpPage = () => {
     <main>
       <Header signup={'false'} login={'false'} />
 
-      <section className='text-center py-32'>
-        <form className='flex flex-col items-center gap-5 '>
-          <p>Sign Up</p>
-          <input type='text' placeholder='Name' className='text-xl border border-black px-3 py-2 rounded-xl' />
-          <input type='text' placeholder='Email' className='text-xl border border-black px-3 py-2 rounded-xl' />
-          <input type='text' placeholder='Password' className='text-xl border border-black px-3 py-2 rounded-xl' />
-          <button type='submit'>Sign up</button>
+      <section className='flex justify-center items-center pt-32 bg-white'>
+        <form className='bg-white shadow-lg rounded-lg p-10 flex flex-col items-center gap-6 w-full max-w-md'>
+          <p className='text-4xl font-bold text-gray-800'>Sign up</p>
+          <input
+            type='text'
+            placeholder='Name'
+            className='w-full text-lg border border-gray-300 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500'
+          />
+          <input
+            type='email'
+            placeholder='Email'
+            className='w-full text-lg border border-gray-300 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500'
+          />
+          <input
+            type='password'
+            placeholder='Password'
+            className='w-full text-lg border border-gray-300 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500'
+          />
+          <button
+            type='submit'
+            className='w-full bg-orange-600 text-white text-lg font-semibold py-3 rounded-lg hover:bg-orange-700 transition-colors duration-300'
+          >
+            Sign up
+          </button>
         </form>
       </section>
+
     </main>
   )
 }
