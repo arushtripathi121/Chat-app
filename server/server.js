@@ -1,7 +1,7 @@
 const express = require('express');
 const { connectToDb } = require('./config/databse');
 const app = express();
-
+const cookie_parser = require('cookie-parser');
 require('dotenv').config();
 const cors = require('cors');
 const router = require('./routes/appRouter');
@@ -18,6 +18,8 @@ const options = {
 app.use(cors(options));
 
 app.use(express.json());
+
+app.use(cookie_parser());
 
 app.get('/', (req, res) => {
     res.send('The server is working fine');
