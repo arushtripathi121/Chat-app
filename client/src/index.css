@@ -11,11 +11,12 @@
 .component-with-scrollbar {
     overflow-y: auto;
     scrollbar-width: thin;
-    scrollbar-color: #888 #f1f1f1;
+    scrollbar-color: #f77b16 #f1f1f1;
 }
 
 .component-with-scrollbar::-webkit-scrollbar {
     width: 4px;
+    height: 5px;
 }
 
 .component-with-scrollbar::-webkit-scrollbar-track {
@@ -23,8 +24,8 @@
 }
 
 .component-with-scrollbar::-webkit-scrollbar-thumb {
-    background-color: #888;
+    background-color: #888888;
     border-radius: 5px;
-    height: 20px;
+    height: 5px;
     transform: scaleY(0.3);
 }

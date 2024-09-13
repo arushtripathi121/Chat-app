@@ -5,6 +5,7 @@ import { CiChat1 } from "react-icons/ci";
 import { LuMenu } from "react-icons/lu";
 import { FaUser } from "react-icons/fa";
 import ProfileComponent from '../components/ProfileComponent';
+import ChatBox from '../components/ChatBox';
 
 const HomePage = () => {
 
@@ -70,7 +71,7 @@ const HomePage = () => {
             <p className='text-2xl text-orange-600 font-semibold px-5 pt-5'>Chats</p>
             <p className='px-2 pt-4'><input type='text' className='w-full outline-none px-3 py-2 text-lg font-medium rounded-2xl bg-gray-100 ' placeholder='Search or start a new chat' /></p>
           </div>
-          <div className='flex flex-col pt-2 component-with-scrollbar overflow-y-auto h-[110svh]'>
+          <div className='flex flex-col pt-2 overflow-y-auto h-[110svh] component-with-scrollbar'>
             <ContactComponent />
             <ContactComponent />
             <ContactComponent />
@@ -97,7 +98,8 @@ const HomePage = () => {
           </div>
         </section>
 
-        <section className='bg-homeChat w-[290svh] h-screen rounded-2xl overflow-y-auto'>
+        <section className='bg-homeChat w-[290svh] h-screen rounded-2xl'>
+          <ChatBox/>
         </section>
         </container>
 
