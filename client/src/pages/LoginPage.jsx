@@ -25,8 +25,7 @@ const LoginPage = () => {
     }
     else{
       const token = res.token;
-      const obj = { token };
-      localStorage.setItem('token-data', JSON.stringify({obj}));
+      localStorage.setItem('token-data', token);
       navigate('/home')
     }
   }
