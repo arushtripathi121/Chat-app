@@ -29,7 +29,6 @@ const ProfileComponent = ({profile}) => {
             credentials: 'include',
         });
         const data = await res.json();
-        console.log(data);
         setUserData(data.userData);
         setName(data.userData.name);
         setId(data.userData._id);
@@ -56,7 +55,7 @@ const ProfileComponent = ({profile}) => {
 
     return (
         <div className='bg-gray-100 px-12 py-8 rounded-lg shadow-lg w-[650px] h-[650px]  bg-opacity-40'>
-            <div onClick={profile} className='w-full pl-[500px]'><IoMdClose className='w-auto h-8'/></div>
+            <div onClick={profile} className='w-full pl-[500px]'><IoMdClose className='w-auto h-8 cursor-pointer'/></div>
             <div className='flex flex-col items-center justify-between gap-5'>
                 <img src={porfile_pic} alt='Profile Picture' className='w-96 h-96 rounded-full border-4 border-blue-500 mb-6' />
                 {!update ? (
