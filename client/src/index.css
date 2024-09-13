@@ -1,3 +1,30 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.bg-homeChat {
+    background-image: url('./assets/homeChatBg.jpg');
+    background-repeat: none;
+    background-size: contain;
+}
+
+.component-with-scrollbar {
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #888 #f1f1f1;
+}
+
+.component-with-scrollbar::-webkit-scrollbar {
+    width: 4px;
+}
+
+.component-with-scrollbar::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.component-with-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 5px;
+    height: 20px;
+    transform: scaleY(0.3);
+}
