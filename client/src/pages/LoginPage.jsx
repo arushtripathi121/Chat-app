@@ -12,23 +12,35 @@ const LoginPage = () => {
   const login = async () => {
     const data = await fetch('http://localhost:5000/login', {
       method: 'POST',
-      headers : {
-        "Content-Type" :"application/json",
+      headers: {
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify({email, password})
+      body: JSON.stringify({ email, password })
     })
 
     const res = await data.json();
 
-    if(res.success == false) {
+    if (res.success == false) {
       setErrorMessage(res.message);
     }
-    else{
+    else {
       const token = res.token;
+      await setCookie("token", token, 1);
       localStorage.setItem('token-data', token);
       navigate('/home')
     }
   }
+
+  const setCookie = (name, value, days) => {
+    let expires = "";
+    if (days) {
+      const date = new Date();
+      date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+      expires = `; expires=${date.toUTCString()}`;
+    }
+    document.cookie = `${name}=${value || ""}${expires}; path=/`;
+  };
+
 
   const onHandleSubmit = (e) => {
     e.preventDefault();

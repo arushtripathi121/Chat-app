@@ -6,7 +6,6 @@ require('dotenv').config();
 exports.signUpUser = async (req, res) => {
     try {
         const { name, email, password, profile_pic } = req.body;
-
         const user = await User.findOne({ email });
 
         if (user) {
@@ -126,10 +125,14 @@ exports.getUserDetailsByToken = async (req, res) => {
             })
         }
 
+        const { _id } = decode;
+
+        const user = await User.findById({_id});
+
         const userData = {
-            name: decode.name,
-            email: decode.email,
-            _id: decode._id,
+            name: user.name,
+            email: user.email,
+            _id: _id,
         }
 
         return res.status(200).json({
@@ -168,7 +171,6 @@ exports.logoutUser = async (req, res) => {
 exports.updateUser = async (req, res) => {
     try {
         const { _id, name, profile_pic } = req.body;
-
         const user = await User.findById({ _id });
 
         if (!user) {
@@ -179,10 +181,10 @@ exports.updateUser = async (req, res) => {
         }
 
         if (name != null) {
-            await user.updateOne({ name: name });
+            await user.updateOne({ name });
         }
         if (profile_pic != null) {
-            await user.updateOne({ profile_pic: profile_pic })
+            await user.updateOne({ profile_pic })
         }
 
         return res.status(200).json({
