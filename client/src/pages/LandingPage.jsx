@@ -2,9 +2,22 @@ import React from 'react'
 import Header from '../components/Header'
 import landingPagePhoto from '../assets/landingPagePhoto.png';
 import ChatBoxLandingPage from '../components/ChatBoxLandingPage';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const LandingPage = () => {
+  
+  const navigate = useNavigate();
+
+  const handleLogin = () => {
+    const item = localStorage.getItem('token-data');
+    if (item) {
+      navigate('/home');
+    }
+    else {
+      navigate('/login');
+    }
+  }
+
   return (
     <main>
 
@@ -19,14 +32,14 @@ const LandingPage = () => {
           <p className='text-xl text-slate-600 font-medium text-justify'>At Chatterly, we believe that communication should be simple, fast, and enjoyable.
             Whether you're catching up with friends, meeting new people, or collaborating with your team,
             Chatterly offers you a smooth and user-friendly chat experience that adapts to your needs.</p>
-            <p className='pt-10'><Link to={'/login'}><button className='text-2xl font-bold text-white bg-gradient-to-r from-orange-600 to-orange-400 px-5 py-2 rounded-[50px] hover:scale-105'>Start Chatting Now</button></Link></p>
+            <p className='pt-10'><button onClick={handleLogin} className='text-2xl font-bold text-white bg-gradient-to-r from-orange-600 to-orange-400 px-5 py-2 rounded-[50px] hover:scale-105'>Start Chatting Now</button></p>
         </div>
 
         <div className='flex flex-col items-center pt-20'>
           <p className='px-[250px] py-[250px] rounded-[250px] absolute top-80  bg-gradient-to-r from-orange-600 to-orange-400'></p>
           <img src={landingPagePhoto} className='w-[60svh] relative'/>
-          <p className='absolute top-[600px] right-[500px]'><ChatBoxLandingPage/></p>
-          <p className='absolute top-[700px] right-[50px]'><ChatBoxLandingPage/></p>
+          <div className='absolute top-[600px] right-[500px]'><ChatBoxLandingPage/></div>
+          <div className='absolute top-[700px] right-[50px]'><ChatBoxLandingPage/></div>
         </div>
 
       </section>
