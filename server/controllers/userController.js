@@ -2,6 +2,28 @@ const User = require('../models/userModel');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken')
 require('dotenv').config();
+const cloudinary = require('cloudinary').v2;
+const path = require('path');
+
+fileUploadToCloudinary = async (file, folder, type) => {
+    const options = { folder };
+    if (type === 'video') {
+        options.resource_type = type;
+    }
+
+    if (!file.buffer) {
+        throw new Error('File buffer is missing');
+    }
+
+    return new Promise((resolve, reject) => {
+        cloudinary.uploader.upload_stream(options, (error, result) => {
+            if (error) {
+                return reject(new Error(error.message));
+            }
+            resolve(result);
+        }).end(file.buffer);
+    });
+};
 
 exports.signUpUser = async (req, res) => {
     try {
@@ -127,12 +149,13 @@ exports.getUserDetailsByToken = async (req, res) => {
 
         const { _id } = decode;
 
-        const user = await User.findById({_id});
+        const user = await User.findById({ _id });
 
         const userData = {
             name: user.name,
             email: user.email,
             _id: _id,
+            profile_pic: user.profile_pic,
         }
 
         return res.status(200).json({
@@ -198,3 +221,66 @@ exports.updateUser = async (req, res) => {
         })
     }
 }
+
+exports.updateUserProfilePicture = async (req, res) => {
+    try {
+        const _id = req.body._id;
+
+        if (_id == null || undefined) {
+            return res.status(500).json({
+                success: false,
+                message: 'no id recieved'
+            })
+        }
+
+        const file = req.file;
+        console.log(file);
+        if (!file) {
+            return res.status(400).json({
+                success: false,
+                message: 'No image uploaded or unsupported file type',
+            });
+        }
+
+        let imageUrl = '';
+        const cloudinaryFolder = "Chatterly";
+
+        const fileType = path.extname(file.originalname).toLowerCase();
+        const isImage = ['.jpg', '.jpeg', '.png'].includes(fileType);
+        const isVideo = ['.mp4'].includes(fileType);
+
+        if (!isImage && !isVideo) {
+            throw new Error('Unsupported file type');
+        }
+
+        try {
+            const response = await fileUploadToCloudinary(file, cloudinaryFolder, isVideo ? 'video' : 'image');
+            imageUrl = response.secure_url;
+        } catch (uploadError) {
+            console.error(`Error uploading file ${file.originalname}:`, uploadError.message);
+        }
+
+        const user = await User.findById({ _id });
+
+        if (!user) {
+            return res.status(500).json({
+                success: false,
+                message: 'user not found'
+            })
+        }
+
+        await User.updateOne({ _id: _id }, { profile_pic: imageUrl });
+
+        res.status(200).json({
+            success: true,
+            message: 'Image uploaded successfully',
+            file: file,
+        });
+    } catch (e) {
+        console.log(e);
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error',
+        });
+    }
+};

@@ -6,6 +6,9 @@ require('dotenv').config();
 const cors = require('cors');
 const router = require('./routes/appRouter');
 
+const cloudinary = require('./config/cloudinary');
+cloudinary.connectToCloudinary();
+
 const port = process.env.PORT;
 
 connectToDb();
