@@ -86,7 +86,7 @@ const ProfileComponent = ({ profile }) => {
 
     return (
         <div>{userData ?
-            <div className='bg-slate-300 px-12 py-8 rounded-lg shadow-lg w-[700px] h-[750px]  bg-opacity-70'>
+            <div className='bg-slate-300 px-12 py-8 rounded-lg shadow-lg w-[700px] h-[750px]  bg-opacity-90'>
 
                 <div onClick={profile} className='w-full pl-[600px]'><IoMdClose className='w-auto h-8 cursor-pointer' /></div>
                 <div className='flex flex-col items-center justify-between gap-5'>

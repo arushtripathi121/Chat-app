@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import profile_pic from '../assets/user.png';
 import { IoMdClose } from 'react-icons/io';
 
-const Search = ({setUserId}) => {
+const Search = ({setUserData}) => {
     const [query, setQuery] = useState('');
     const [searchResults, setSearchResults] = useState([]);
 
@@ -17,8 +17,6 @@ const Search = ({setUserId}) => {
 
         const data = await res.json();
         setSearchResults(data.data);
-        console.log(searchResults);
-
     }
 
     const closeResults = () => {
@@ -56,7 +54,7 @@ const Search = ({setUserId}) => {
             {searchResults && query &&
                 <div className='border border-black max-w-[350px] max-h-[500px]  bg-slate-300 bg-opacity-70 rounded-lg absolute top-[15svh] left-12 right-0 mx-5 overflow-y-auto component-with-scrollbar flex flex-col items-center'>
                     {searchResults.map(m => (
-                        <div key={m._id} className='flex flex-row items-center justify-between w-full px-2 py-2 border-b border-black cursor-pointer hover:bg-slate-400' onClick={() => setUserId(m._id)}>
+                        <div key={m._id} className='flex flex-row items-center justify-between w-full px-2 py-2 border-b border-black cursor-pointer hover:bg-slate-400' onClick={() => setUserData(m)}>
                             <img src={m.profile_pic ? m.profile_pic : profile_pic} className='w-32 h-32 rounded-full' />
                             <div className='flex flex-col items-center'>
                                 <p className='text-xl'>{m.name}</p>
