@@ -20,7 +20,7 @@ const Header = ({ login, signup }) => {
       navigate('/home');
     }
     else {
-      navigate('signup')
+      navigate('/signup')
     }
   }
   return (

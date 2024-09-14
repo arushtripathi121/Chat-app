@@ -1,5 +1,6 @@
 const User = require('../models/userModel');
 const bcrypt = require('bcrypt');
+const { profile } = require('console');
 const jwt = require('jsonwebtoken')
 require('dotenv').config();
 const cloudinary = require('cloudinary').v2;
@@ -27,7 +28,7 @@ fileUploadToCloudinary = async (file, folder, type) => {
 
 exports.signUpUser = async (req, res) => {
     try {
-        const { name, email, password, profile_pic } = req.body;
+        const { name, email, password, userName } = req.body;
         const user = await User.findOne({ email });
 
         if (user) {
@@ -48,7 +49,7 @@ exports.signUpUser = async (req, res) => {
             })
         }
 
-        await User.create({ name, email, password: hashedPassword, profile_pic });
+        await User.create({ name, email, password: hashedPassword, userName });
 
         return res.status(200).json({
             success: true,
@@ -98,6 +99,7 @@ exports.loginUser = async (req, res) => {
         const payload = {
             email: user.email,
             name: user.name,
+            userName: user.userName,
             _id: user._id,
         }
 
@@ -154,6 +156,7 @@ exports.getUserDetailsByToken = async (req, res) => {
         const userData = {
             name: user.name,
             email: user.email,
+            userName: user.userName,
             _id: _id,
             profile_pic: user.profile_pic,
         }
@@ -193,7 +196,7 @@ exports.logoutUser = async (req, res) => {
 
 exports.updateUser = async (req, res) => {
     try {
-        const { _id, name, profile_pic } = req.body;
+        const { _id, name, userName } = req.body;
         const user = await User.findById({ _id });
 
         if (!user) {
@@ -206,8 +209,8 @@ exports.updateUser = async (req, res) => {
         if (name != null) {
             await user.updateOne({ name });
         }
-        if (profile_pic != null) {
-            await user.updateOne({ profile_pic })
+        if (userName != null) {
+            await user.updateOne({ userName })
         }
 
         return res.status(200).json({
@@ -283,3 +286,46 @@ exports.updateUserProfilePicture = async (req, res) => {
         });
     }
 };
+
+
+exports.searchUser = async (req, res) => {
+    try {
+        const { query } = req.body;
+
+        const userData = await User.find({
+            $or: [
+                { name: { $regex: query, $options: 'i' } },
+                { userName: { $regex: query, $options: 'i' } }
+            ]
+        });
+
+        if (!userData) {
+            return res.status(400).json({
+                success: false,
+                message: 'No user found'
+            });
+        }
+
+        let userDetails;
+        if (userData) {
+            userDetails = userData.map(userData => ({
+                profile_pic: userData.profile_pic,
+                name: userData.name,
+                _id: userData._id,
+                userName: userData.userName,
+            }));
+        }
+
+        res.status(200).json({
+            success: true,
+            data: userDetails
+        });
+
+    } catch (e) {
+        console.log(e);
+        res.status(500).json({
+            success: false,
+            message: 'Something went wrong'
+        });
+    }
+}

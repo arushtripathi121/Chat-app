@@ -7,6 +7,7 @@ const SignUpPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
+  const [userName, setUserName] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [success, setSuccess] = useState(false);
 
@@ -18,7 +19,7 @@ const SignUpPage = () => {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ name, email, password })
+      body: JSON.stringify({ name, email, password, userName })
     })
 
     const res = await data.json();
@@ -58,6 +59,12 @@ const SignUpPage = () => {
             onChange={(e) => setName(e.target.value)}
             type='text'
             placeholder='Name'
+            className='w-full text-lg border border-gray-300 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500'
+          />
+          <input
+            onChange={(e) => setUserName(e.target.value)}
+            type='text'
+            placeholder='User name'
             className='w-full text-lg border border-gray-300 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500'
           />
           <input

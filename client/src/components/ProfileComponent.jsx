@@ -105,6 +105,7 @@ const ProfileComponent = ({ profile }) => {
                         <div className='flex flex-col items-center'>
                             <h2 className='text-2xl font-semibold text-gray-800'>{userData && userData.name}</h2>
                             <p className='text-lg text-gray-600'>{userData && userData.email}</p>
+                            <p className='text-lg text-gray-600'>userName : {userData && userData.userName}</p>
                         </div>
                     ) : (
                         <div className='flex flex-col items-center gap-4'>
