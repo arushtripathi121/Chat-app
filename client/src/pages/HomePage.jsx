@@ -9,7 +9,7 @@ import ChatBox from '../components/ChatBox';
 import Search from '../components/Search';
 import io from 'socket.io-client'
 import { useDispatch } from 'react-redux';
-import { setOnlineUser } from '../redux/userSlice';
+import { setOnlineUser, setSocketConnection } from '../redux/userSlice';
 const HomePage = () => {
 
   const navigate = useNavigate();
@@ -33,6 +33,7 @@ const HomePage = () => {
 
     if (res.success = true) {
       localStorage.setItem('token-data', '');
+      localStorage.setItem('_id', '')
       navigate('/login');
     }
   }
@@ -59,6 +60,8 @@ const HomePage = () => {
         token: localStorage.getItem('token-data'),
       }
     })
+
+    dispatch(setSocketConnection(socketIoConnection));
 
     socketIoConnection.on('onlineUser', (data) => {
       dispatch(setOnlineUser(data));

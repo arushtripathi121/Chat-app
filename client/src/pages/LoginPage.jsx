@@ -8,7 +8,6 @@ const LoginPage = () => {
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
-
   const login = async () => {
     const data = await fetch('http://localhost:5000/login', {
       method: 'POST',
@@ -27,6 +26,7 @@ const LoginPage = () => {
       const token = res.token;
       await setCookie("token", token, 1);
       localStorage.setItem('token-data', token);
+      localStorage.setItem('_id', res._id);
       navigate('/home')
     }
   }

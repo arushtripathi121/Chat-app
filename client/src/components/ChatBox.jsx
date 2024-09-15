@@ -1,9 +1,17 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { AiOutlineSend } from "react-icons/ai";
 import profile_pic from '../assets/user.png'
 import { useSelector } from 'react-redux';
 const ChatBox = ({ data }) => {
-  const onlineUser = useSelector(state => state.user?.onlineUser);
+  const onlineUser = useSelector(state => state?.user?.onlineUser);
+  const socketConnection = useSelector(state => state.user?.socketConnection);
+
+  useEffect(() => {
+    if(socketConnection) {
+      console.log(data);
+      // socketConnection.emit('message', data._id);
+    }
+  }, [data, socketConnection ])
   return (
     <main className='flex flex-col h-screen w-full'>
       {data ? (

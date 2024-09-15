@@ -5,6 +5,7 @@ require('dotenv').config();
 const { Server } = require('socket.io');
 const  http  = require('http');
 const { getUserDetailsByToken } = require('../helperFunctions/getUserDetailsByToken');
+const User = require('../models/userModel');
 
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -31,6 +32,12 @@ io.on('connection', async (socket) => {
 
     io.emit('onlineUser', Array.from(onlineUser));
     
+    socket.on('message', async (data) => {
+        console.log('userId -> ', data);
+        const userDetails = await User.findById(data);
+        console.log(userDetails);
+        
+    })
 })
 
 io.on('disconnect', () => {

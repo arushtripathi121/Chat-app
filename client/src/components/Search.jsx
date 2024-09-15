@@ -7,6 +7,7 @@ const Search = ({ setUserData }) => {
     const [query, setQuery] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const onlineUser = useSelector(state => state.user?.onlineUser);
+    const _id = localStorage.getItem('_id');
 
     const search = async () => {
         const res = await fetch('http://localhost:5000/searchUser', {
@@ -19,8 +20,6 @@ const Search = ({ setUserData }) => {
 
         const data = await res.json();
         setSearchResults(data.data);
-        console.log(searchResults);
-
     }
 
     const closeResults = () => {
@@ -57,7 +56,7 @@ const Search = ({ setUserData }) => {
 
             {searchResults.length > 0  && (
                 <div className='border border-orange-600 bg-white bg-opacity-90 rounded-lg mt-2 mx-2 md:mx-4 max-w-full max-h-[75svh] md:max-h-[80svh] overflow-y-auto flex flex-col'>
-                    {searchResults.map(m => (
+                    {searchResults.filter(m => m._id !== _id).map(m => (
                         <div
                             key={m._id}
                             className='flex items-center justify-between w-full px-4 py-3 cursor-pointer hover:bg-orange-200 transition-colors duration-200'
