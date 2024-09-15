@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useAsyncError, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import ContactComponent from '../components/ContactComponent';
 import { CiChat1 } from "react-icons/ci";
 import { LuMenu } from "react-icons/lu";
@@ -8,6 +8,8 @@ import ProfileComponent from '../components/ProfileComponent';
 import ChatBox from '../components/ChatBox';
 import Search from '../components/Search';
 import io from 'socket.io-client'
+import { useDispatch } from 'react-redux';
+import { setOnlineUser } from '../redux/userSlice';
 const HomePage = () => {
 
   const navigate = useNavigate();
@@ -15,7 +17,8 @@ const HomePage = () => {
   const [showMenu, setShowMenu] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [currentUserChatData, setCurrentUserChatData] = useState(null);
-  const [ token, setToken ] = useState('');
+  const [token, setToken] = useState('');
+  const dispatch = useDispatch();
 
   const setChatData = (data) => {
     setCurrentUserChatData(data);
@@ -53,54 +56,90 @@ const HomePage = () => {
   useEffect(() => {
     const socketIoConnection = io('http://localhost:5000', {
       auth: {
-        token : token,
+        token: localStorage.getItem('token-data'),
       }
     })
 
-    return  () => {
+    socketIoConnection.on('onlineUser', (data) => {
+      dispatch(setOnlineUser(data));
+    })
+
+    return () => {
       socketIoConnection.disconnect();
-    } 
+    }
   }, [])
 
   return (
-    <main>
-      <section className='flex w-screen h-screen font-poppins'>
-        <nav className='w-[15svh] bg-gray-200 flex flex-col items-center gap-5 pt-5'>
-          <p><LuMenu onClick={handleMenu} className='w-full text-3xl text-orange-600 cursor-pointer' /></p>
-          <p><CiChat1 className='w-full text-3xl text-orange-600 border-l-4 border-orange-600 cursor-pointer' /></p>
-          <p onClick={handleProfile}><FaUser className='w-full text-3xl text-orange-600 cursor-pointer' /></p>
+    <main className='flex w-full h-screen font-poppins'>
+      <nav className='w-[60px] md:w-[80px] bg-gray-200 flex flex-col items-center gap-6 pt-5'>
+        <LuMenu
+          onClick={handleMenu}
+          className='text-3xl text-orange-600 cursor-pointer'
+        />
+        <CiChat1
+          className='text-3xl text-orange-600 border-l-4 border-orange-600 cursor-pointer'
+        />
+        <FaUser
+          onClick={handleProfile}
+          className='text-3xl text-orange-600 cursor-pointer'
+        />
+      </nav>
+
+      {showMenu && (
+        <nav className='absolute left-0 top-0 h-full w-[220px] bg-gray-200 bg-opacity-95 flex flex-col items-start p-5'>
+          <div className='flex flex-col gap-6'>
+            <LuMenu
+              onClick={handleMenu}
+              className='text-3xl text-orange-600 cursor-pointer'
+            />
+            <div className='text-orange-600 text-xl flex items-center gap-3'>
+              <CiChat1 className='text-3xl border-l-4 border-orange-600' />
+              Chats
+            </div>
+            <div
+              onClick={handleProfile}
+              className='text-orange-600 text-xl flex items-center gap-3 cursor-pointer'
+            >
+              <FaUser className='text-3xl' />
+              Profile
+            </div>
+          </div>
+          <div className='mt-auto w-full'>
+            <button
+              className='bg-red-500 text-white px-3 py-2 rounded-lg w-full text-lg hover:bg-red-600'
+              onClick={handleLogout}
+            >
+              Logout
+            </button>
+          </div>
         </nav>
+      )}
 
-        {showMenu &&
-          <nav className='w-[22svh] absolute h-full bg-opacity-95 bg-gray-200 flex flex-col items-start px-3 justify-between pb-4'>
-            <div className='flex flex-col items-start  pt-5 gap-5 '>
-              <p className='text-orange-600 text-xl gap-5'><LuMenu onClick={handleMenu} className='w-full text-3xl text-orange-600 cursor-pointer' /></p>
-              <p className='text-orange-600 text-xl flex gap-5'><CiChat1 className='w-full text-3xl border-l-4 border-orange-600 text-orange-600 cursor-pointer' />Chats</p>
-              <p onClick={handleProfile} className='text-orange-600 text-xl flex gap-5'><FaUser className='w-full text-3xl text-orange-600 cursor-pointer' />Profile</p>
-            </div>
-            <div className='w-full'>
-              <button className='bg-red-500 text-white px-3 py-1 rounded-xl w-full text-xl hover:bg-red-600' onClick={handleLogout}>
-                Logout
-              </button>
-            </div>
-          </nav>
-        }
-
-        <section className=' w-[100svh] flex flex-col'>
+      <main className='flex h-screen w-full '>
+        {/* First Section: Search and Chat Content */}
+        <section className='flex flex-col w-3/12 lg:w-1/4 flex-grow px-1 border border-orange-200 shadow-lg shadow-orange-200 rounded-xl'>
           <Search setUserData={setChatData} />
-          <div className='flex flex-col pt-2 overflow-y-auto h-[110svh] component-with-scrollbar'>
+          <div className='flex-grow overflow-y-auto p-4'>
           </div>
         </section>
 
-        <section className='bg-homeChat w-[290svh] h-screen rounded-2xl'>
+
+
+        {/* Second Section: ChatBox */}
+        <section className='hidden lg:block flex-grow bg-white rounded-2xl w-9/12 lg:w-3/4'>
           <ChatBox data={currentUserChatData} />
         </section>
-      </section>
+      </main>
 
-      {
-        showProfile && <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"><ProfileComponent profile={handleProfile} /></div>
-      }
+
+      {showProfile && (
+        <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+          <ProfileComponent profile={handleProfile} />
+        </div>
+      )}
     </main>
+
+
   )
 }
 

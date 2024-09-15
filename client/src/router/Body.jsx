@@ -4,6 +4,8 @@ import LandingPage from '../pages/LandingPage';
 import LoginPage from '../pages/LoginPage';
 import SignUpPage from '../pages/SignUpPage';
 import HomePage from '../pages/HomePage';
+import { Provider } from 'react-redux';
+import appStore from '../redux/appStore';
 
 const Body = () => {
 
@@ -18,17 +20,19 @@ const Body = () => {
     },
     {
       path: '/signup',
-      element: <SignUpPage/>
+      element: <SignUpPage />
     }
     ,
     {
       path: '/home',
-      element: <HomePage/>
+      element: <HomePage />
     }
   ])
   return (
     <div>
-      <RouterProvider router={appRouter} />
+      <Provider store={appStore}>
+        <RouterProvider router={appRouter} />
+      </Provider>
     </div>
   )
 }

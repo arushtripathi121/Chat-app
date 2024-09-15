@@ -14,6 +14,8 @@ const io = new Server(server, {
     }
 })
 
+const onlineUser = new Set();
+
 io.on('connection', async (socket) => {
     console.log("connected user", socket.id);
 
@@ -23,10 +25,16 @@ io.on('connection', async (socket) => {
     const user = await getUserDetailsByToken(token); 
     
     console.log(user);
+
+    socket.join(user?._id)
+    onlineUser.add(user?._id);
+
+    io.emit('onlineUser', Array.from(onlineUser));
     
 })
 
 io.on('disconnect', () => {
+    onlineUser.delete(user?._id);
     console.log("disconnected user", socket.id);
 })
 

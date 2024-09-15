@@ -4,13 +4,13 @@ const User = require('../models/userModel');
 exports.getUserDetailsByToken = async (token) => {
     try {
         if (!token) {
-            return null
+            return;
         }
 
         const decode = await jwt.verify(token, process.env.JWT_SECRET);
 
         if (!decode) {
-            return null;
+            return;
         }
 
         const { _id } = decode;
@@ -28,6 +28,6 @@ exports.getUserDetailsByToken = async (token) => {
         return userData;
     } catch (e) {
         console.log(e);
-        return null;
+        return;
     }
 }

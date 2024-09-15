@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import profile_pic from '../assets/user.png'
 import { IoMdClose } from "react-icons/io";
+import { AiOutlineEdit, AiOutlineMail, AiOutlineSave, AiOutlineUpload, AiOutlineUser } from 'react-icons/ai';
 
 const ProfileComponent = ({ profile }) => {
 
@@ -85,53 +86,89 @@ const ProfileComponent = ({ profile }) => {
     }, []);
 
     return (
-        <div>
-            {userData ?
-                <div className='bg-white px-12 py-8 rounded-lg shadow-lg w-[700px] h-[750px] bg-opacity-90 border border-orange-300'>
-                    <div onClick={profile} className='w-full flex justify-end pr-5'>
-                        <IoMdClose className='w-auto h-8 cursor-pointer text-orange-600' />
+        <div className='flex justify-center items-center bg-gray-50'>
+            {userData ? (
+                <div className='bg-white px-8 py-6 rounded-lg shadow-lg w-full max-w-lg bg-opacity-90 border border-orange-300'>
+                    <div onClick={profile} className='w-full flex justify-end pr-4'>
+                        <IoMdClose className='w-8 h-8 cursor-pointer text-orange-600' />
                     </div>
-                    <div className='flex flex-col items-center justify-between gap-5'>
-                        <div className='flex flex-col pt-4 items-center'>
-                            {userData.profile_pic != null ?
-                                <img src={userData.profile_pic} alt='Profile Picture' className='w-96 h-96 rounded-full border-4 border-orange-500 mb-6' />
-                                :
-                                <img src={profile_pic} alt='Profile Picture' className='w-96 h-96 rounded-full border-4 border-orange-500 mb-6' />
-                            }
-                            <p className='flex items-center'>
-                                <input type='file' placeholder='Choose photo' className='border border-gray-300 rounded-lg px-4 py-2' onChange={e => setUploadImage(e.target.files[0])} />
-                                <button onClick={handlePhoto} className='bg-orange-500 text-white rounded-lg px-6 py-2 font-semibold shadow-md hover:bg-orange-600 transition duration-300 ml-4'>Update</button>
-                            </p>
+                    <div className='flex flex-col items-center justify-between gap-6'>
+                        <div className='flex flex-col items-center'>
+                            {userData.profile_pic ? (
+                                <img
+                                    src={userData.profile_pic}
+                                    alt='Profile Picture'
+                                    className='w-40 h-40 rounded-full border-4 border-orange-500 mb-4'
+                                />
+                            ) : (
+                                <img
+                                    src={profile_pic}
+                                    alt='Profile Picture'
+                                    className='w-40 h-40 rounded-full border-4 border-orange-500 mb-4'
+                                />
+                            )}
+                            <div className='flex items-center gap-3'>
+                                <input
+                                    type='file'
+                                    placeholder='Choose photo'
+                                    className='border border-gray-300 rounded-lg px-3 py-2'
+                                    onChange={e => setUploadImage(e.target.files[0])}
+                                />
+                                <button
+                                    onClick={handlePhoto}
+                                    className='bg-orange-500 text-white rounded-lg px-4 py-2 font-semibold shadow-md hover:bg-orange-600 transition duration-300'
+                                >
+                                    <AiOutlineUpload className='inline-block mr-2' />
+                                    Update
+                                </button>
+                            </div>
                         </div>
                         {!update ? (
-                            <div className='flex flex-col items-center'>
-                                <h2 className='text-2xl font-semibold text-gray-800'>{userData.name}</h2>
-                                <p className='text-lg text-gray-600'>{userData.email}</p>
-                                <p className='text-lg text-gray-600'>userName: {userData.userName}</p>
+                            <div className='flex flex-col items-center gap-2'>
+                                <h2 className='text-xl font-semibold text-gray-800'>{userData.name}</h2>
+                                <p className='text-md text-gray-600 flex items-center gap-1'>
+                                    <AiOutlineMail className='text-gray-500' />
+                                    {userData.email}
+                                </p>
+                                <p className='text-md text-gray-600 flex items-center gap-1'>
+                                    <AiOutlineUser className='text-gray-500' />
+                                    userName: {userData.userName}
+                                </p>
                             </div>
                         ) : (
                             <div className='flex flex-col items-center gap-4'>
-                                <input type='text' onChange={e => setName(e.target.value)} placeholder={`${name}`} className='border border-gray-300 rounded-lg px-4 py-2 w-full max-w-sm focus:outline-none focus:ring-2 focus:ring-orange-500' />
+                                <input
+                                    type='text'
+                                    onChange={e => setName(e.target.value)}
+                                    placeholder={name}
+                                    className='border border-gray-300 rounded-lg px-4 py-2 w-full max-w-xs focus:outline-none focus:ring-2 focus:ring-orange-500'
+                                />
                             </div>
                         )}
-                        {!update ?
-                            <button onClick={handleEdit} className='bg-orange-500 text-white rounded-lg px-6 py-2 font-semibold shadow-md hover:bg-orange-600 transition duration-300'>
+                        {!update ? (
+                            <button
+                                onClick={handleEdit}
+                                className='bg-orange-500 text-white rounded-lg px-6 py-2 font-semibold shadow-md hover:bg-orange-600 transition duration-300'
+                            >
+                                <AiOutlineEdit className='inline-block mr-2' />
                                 Edit Details
                             </button>
-                            :
-                            <button onClick={handleUpdate} className='bg-orange-500 text-white rounded-lg px-6 py-2 font-semibold shadow-md hover:bg-orange-600 transition duration-300'>
+                        ) : (
+                            <button
+                                onClick={handleUpdate}
+                                className='bg-orange-500 text-white rounded-lg px-6 py-2 font-semibold shadow-md hover:bg-orange-600 transition duration-300'
+                            >
+                                <AiOutlineSave className='inline-block mr-2' />
                                 Update Details
                             </button>
-                        }
+                        )}
                         {errorMessage && <p className='text-red-600 text-lg'>{errorMessage}</p>}
                     </div>
                 </div>
-                :
-                <p className='text-center'>Loading profile</p>
-            }
+            ) : (
+                <p className='text-center text-gray-700'>Loading profile...</p>
+            )}
         </div>
-
-
     )
 }
 

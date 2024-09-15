@@ -4,7 +4,7 @@ import Body from './router/Body'
 function App() {
   return (
     <>
-    <Body/>
+      <Body/>
     </>
   )
 }
