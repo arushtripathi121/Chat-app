@@ -313,6 +313,7 @@ exports.searchUser = async (req, res) => {
                 name: userData.name,
                 _id: userData._id,
                 userName: userData.userName,
+
             }));
         }
 

@@ -85,51 +85,52 @@ const ProfileComponent = ({ profile }) => {
     }, []);
 
     return (
-        <div>{userData ?
-            <div className='bg-slate-300 px-12 py-8 rounded-lg shadow-lg w-[700px] h-[750px]  bg-opacity-90'>
-
-                <div onClick={profile} className='w-full pl-[600px]'><IoMdClose className='w-auto h-8 cursor-pointer' /></div>
-                <div className='flex flex-col items-center justify-between gap-5'>
-
-                    <div className='flex flex-col pt-4 items-center'>
-                        {userData.profile_pic != null ? <img src={userData.profile_pic} alt='Profile Picture' className='w-96 h-96 rounded-full border-4 border-blue-500 mb-6' />
-                            :
-                            <img src={profile_pic} alt='Profile Picture' className='w-96 h-96 rounded-full border-4 border-blue-500 mb-6' />
-                        }
-                        <p className='flex items-center'>
-                            <input type='file' placeholder='Chose photo' onChange={e => setUploadImage(e.target.files[0])} />
-                            <button onClick={handlePhoto} className='bg-blue-500 text-white rounded-lg px-6 py-2 font-semibold shadow-md hover:bg-blue-600 transition duration-300'>Update</button>
-                        </p>
+        <div>
+            {userData ?
+                <div className='bg-white px-12 py-8 rounded-lg shadow-lg w-[700px] h-[750px] bg-opacity-90 border border-orange-300'>
+                    <div onClick={profile} className='w-full flex justify-end pr-5'>
+                        <IoMdClose className='w-auto h-8 cursor-pointer text-orange-600' />
                     </div>
-                    {!update ? (
-                        <div className='flex flex-col items-center'>
-                            <h2 className='text-2xl font-semibold text-gray-800'>{userData && userData.name}</h2>
-                            <p className='text-lg text-gray-600'>{userData && userData.email}</p>
-                            <p className='text-lg text-gray-600'>userName : {userData && userData.userName}</p>
+                    <div className='flex flex-col items-center justify-between gap-5'>
+                        <div className='flex flex-col pt-4 items-center'>
+                            {userData.profile_pic != null ?
+                                <img src={userData.profile_pic} alt='Profile Picture' className='w-96 h-96 rounded-full border-4 border-orange-500 mb-6' />
+                                :
+                                <img src={profile_pic} alt='Profile Picture' className='w-96 h-96 rounded-full border-4 border-orange-500 mb-6' />
+                            }
+                            <p className='flex items-center'>
+                                <input type='file' placeholder='Choose photo' className='border border-gray-300 rounded-lg px-4 py-2' onChange={e => setUploadImage(e.target.files[0])} />
+                                <button onClick={handlePhoto} className='bg-orange-500 text-white rounded-lg px-6 py-2 font-semibold shadow-md hover:bg-orange-600 transition duration-300 ml-4'>Update</button>
+                            </p>
                         </div>
-                    ) : (
-                        <div className='flex flex-col items-center gap-4'>
-                            <input type='text' onChange={e => setName(e.target.value)} placeholder={`${name}`} className='border border-gray-300 rounded-lg px-4 py-2 w-full max-w-sm focus:outline-none focus:ring-2 focus:ring-blue-500' />
-                        </div>
-                    )}
-
-                    {!update ?
-                        <button onClick={handleEdit} className='bg-blue-500 text-white rounded-lg px-6 py-2 font-semibold shadow-md hover:bg-blue-600 transition duration-300'>
-                            Edit Details
-                        </button>
-                        :
-                        <button onClick={handleUpdate} className='bg-blue-500 text-white rounded-lg px-6 py-2 font-semibold shadow-md hover:bg-blue-600 transition duration-300'>
-                            Update Details
-                        </button>
-                    }
-
-                    {errorMessage && <p className='text-red-600 text-lg'>{errorMessage}</p>}
+                        {!update ? (
+                            <div className='flex flex-col items-center'>
+                                <h2 className='text-2xl font-semibold text-gray-800'>{userData.name}</h2>
+                                <p className='text-lg text-gray-600'>{userData.email}</p>
+                                <p className='text-lg text-gray-600'>userName: {userData.userName}</p>
+                            </div>
+                        ) : (
+                            <div className='flex flex-col items-center gap-4'>
+                                <input type='text' onChange={e => setName(e.target.value)} placeholder={`${name}`} className='border border-gray-300 rounded-lg px-4 py-2 w-full max-w-sm focus:outline-none focus:ring-2 focus:ring-orange-500' />
+                            </div>
+                        )}
+                        {!update ?
+                            <button onClick={handleEdit} className='bg-orange-500 text-white rounded-lg px-6 py-2 font-semibold shadow-md hover:bg-orange-600 transition duration-300'>
+                                Edit Details
+                            </button>
+                            :
+                            <button onClick={handleUpdate} className='bg-orange-500 text-white rounded-lg px-6 py-2 font-semibold shadow-md hover:bg-orange-600 transition duration-300'>
+                                Update Details
+                            </button>
+                        }
+                        {errorMessage && <p className='text-red-600 text-lg'>{errorMessage}</p>}
+                    </div>
                 </div>
-            </div>
-            :
-            <p className='text-center'>Loading profile</p>
-        }
+                :
+                <p className='text-center'>Loading profile</p>
+            }
         </div>
+
 
     )
 }
