@@ -1,6 +1,6 @@
 const express = require('express');
 const { connectToDb } = require('./config/databse');
-const app = express();
+// const app = express();
 const cookie_parser = require('cookie-parser');
 require('dotenv').config();
 const cors = require('cors');
@@ -8,6 +8,8 @@ const router = require('./routes/appRouter');
 
 const cloudinary = require('./config/cloudinary');
 cloudinary.connectToCloudinary();
+
+const { server, app } = require('./socket/server');
 
 const port = process.env.PORT;
 
