@@ -32,6 +32,6 @@ app.get('/', (req, res) => {
 
 app.use('/', router);
 
-app.listen(port, () => {
+server.listen(port, () => {
     console.log(`The server is running on localhost:${port}`);
 })

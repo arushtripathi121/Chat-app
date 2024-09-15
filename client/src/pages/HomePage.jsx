@@ -7,7 +7,7 @@ import { FaUser } from "react-icons/fa";
 import ProfileComponent from '../components/ProfileComponent';
 import ChatBox from '../components/ChatBox';
 import Search from '../components/Search';
-
+import io from 'socket.io-client'
 const HomePage = () => {
 
   const navigate = useNavigate();
@@ -15,6 +15,7 @@ const HomePage = () => {
   const [showMenu, setShowMenu] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [currentUserChatData, setCurrentUserChatData] = useState(null);
+  const [ token, setToken ] = useState('');
 
   const setChatData = (data) => {
     setCurrentUserChatData(data);
@@ -46,6 +47,19 @@ const HomePage = () => {
     if (!item) {
       navigate('/login')
     }
+    setToken(item);
+  }, [])
+
+  useEffect(() => {
+    const socketIoConnection = io('http://localhost:5000', {
+      auth: {
+        token : token,
+      }
+    })
+
+    return  () => {
+      socketIoConnection.disconnect();
+    } 
   }, [])
 
   return (
