@@ -3,48 +3,52 @@ const app = express();
 require('dotenv').config();
 
 const { Server } = require('socket.io');
-const  http  = require('http');
+const http = require('http');
 const { getUserDetailsByToken } = require('../helperFunctions/getUserDetailsByToken');
 const User = require('../models/userModel');
 
 const server = http.createServer(app);
 const io = new Server(server, {
-    cors: {
-        origin: process.env.frontendURL,
-        credentials: true,
-    }
-})
+  cors: {
+    origin: process.env.frontendURL,
+    credentials: true,
+  }
+});
 
-const onlineUser = new Set();
+const onlineUsers = new Set();
 
 io.on('connection', async (socket) => {
-    console.log("connected user", socket.id);
-
+  try {
     const token = socket.handshake.auth.token;
-    console.log(token);
+    const user = await getUserDetailsByToken(token);
 
-    const user = await getUserDetailsByToken(token); 
-    
-    console.log(user);
+    if (user?._id) {
+      socket.join(user._id);
+      onlineUsers.add(user._id);
+      io.emit('onlineUser', Array.from(onlineUsers));
 
-    socket.join(user?._id)
-    onlineUser.add(user?._id);
+      socket.on('join-chat', async (userId) => {
+        const userDetails = await User.findById(userId);
+      });
 
-    io.emit('onlineUser', Array.from(onlineUser));
-    
-    socket.on('message', async (data) => {
-        console.log('userId -> ', data);
-        const userDetails = await User.findById(data);
-        console.log(userDetails);
-        
-    })
-})
+      socket.on('new-message', (messageData) => {
+        const { sender, receiver, message } = messageData;
 
-io.on('disconnect', () => {
-    onlineUser.delete(user?._id);
-    console.log("disconnected user", socket.id);
-})
+        if (receiver && message) {
+          io.to(receiver).emit('get-message', { sender: sender, message });
+        }
+      });
+
+      socket.on('disconnect', () => {
+        onlineUsers.delete(user._id);
+        io.emit('onlineUser', Array.from(onlineUsers));
+      });
+    }
+  } catch (error) {
+    console.error('Error during socket connection:', error);
+  }
+});
 
 module.exports = {
-    app, server
-}
+  app, server
+};

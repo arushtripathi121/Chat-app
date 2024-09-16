@@ -3,13 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import ContactComponent from '../components/ContactComponent';
 import { CiChat1 } from "react-icons/ci";
 import { LuMenu } from "react-icons/lu";
-import { FaUser } from "react-icons/fa";
+import { FaArrowLeft, FaUser } from "react-icons/fa";
 import ProfileComponent from '../components/ProfileComponent';
 import ChatBox from '../components/ChatBox';
 import Search from '../components/Search';
 import io from 'socket.io-client'
 import { useDispatch } from 'react-redux';
 import { setOnlineUser, setSocketConnection } from '../redux/userSlice';
+
 const HomePage = () => {
 
   const navigate = useNavigate();
@@ -19,9 +20,12 @@ const HomePage = () => {
   const [currentUserChatData, setCurrentUserChatData] = useState(null);
   const [token, setToken] = useState('');
   const dispatch = useDispatch();
+  const [activeSection, setActiveSection] = useState('search');
+  const isMobileView = window.innerWidth < 1024;
 
   const setChatData = (data) => {
     setCurrentUserChatData(data);
+    setActiveSection('chat')
   }
 
   const handleLogout = async () => {
@@ -118,25 +122,37 @@ const HomePage = () => {
         </nav>
       )}
 
-      <main className='flex h-screen w-full '>
-        {/* First Section: Search and Chat Content */}
-        <section className='flex flex-col w-3/12 lg:w-1/4 flex-grow px-1 border border-orange-200 shadow-lg shadow-orange-200 rounded-xl'>
-          <Search setUserData={setChatData} />
-          <div className='flex-grow overflow-y-auto p-4'>
-          </div>
-        </section>
-
-
-
-        {/* Second Section: ChatBox */}
-        <section className='hidden lg:block flex-grow bg-white rounded-2xl w-9/12 lg:w-3/4'>
-          <ChatBox data={currentUserChatData} />
-        </section>
+      <main className='flex h-screen w-full'>
+        {isMobileView ? (
+          activeSection === 'search' ? (
+            <section className='w-full h-full flex flex-col bg-gray-100'>
+              <Search setUserData={setChatData} />
+            </section>
+          ) : (
+            <section className='w-full h-full bg-white flex flex-col'>
+              <div className='p-2'>
+                <FaArrowLeft
+                  className='text-3xl text-orange-600 cursor-pointer'
+                  onClick={() => setActiveSection('search')}
+                />
+              </div>
+              <ChatBox data={currentUserChatData} />
+            </section>
+          )
+        ) : (
+          <>
+            <section className='flex flex-col w-3/12 lg:w-1/4 flex-grow px-1 border border-orange-200 shadow-lg shadow-orange-200 rounded-xl h-full'>
+              <Search setUserData={setChatData} />
+              <div className='flex-grow overflow-y-auto p-4'></div>
+            </section>
+            <section className='hidden lg:block flex-grow bg-white rounded-2xl w-9/12 lg:w-3/4 h-full'>
+              <ChatBox data={currentUserChatData} />
+            </section>
+          </>
+        )}
       </main>
-
-
       {showProfile && (
-        <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+        <div className='fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'>
           <ProfileComponent profile={handleProfile} />
         </div>
       )}
