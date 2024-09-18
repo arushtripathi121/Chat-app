@@ -11,21 +11,25 @@ const ChatBox = ({ data }) => {
   const userId = localStorage.getItem('_id');
 
   useEffect(() => {
-    if (socketConnection && data?._id) {
-      socketConnection.emit('join-chat', data._id);
-    }
-  }, [data, socketConnection]);
-
-  useEffect(() => {
     if (socketConnection) {
-      socketConnection.on('get-message', (messageData) => {
-        setMessages(prevMessages => [
-          ...prevMessages,
-          { ...messageData, isSent: false }
-        ]);
-      });
+      socketConnection.emit('join-chat', data?._id);
+
+      const handleNewMessage = (messageData) => {
+        if (messageData.receiver === data._id || messageData.sender === data._id) {
+          setMessages(prevMessages => [
+            ...prevMessages,
+            { ...messageData, isSent: messageData.sender === userId }
+          ]);
+        }
+      };
+
+      socketConnection.on('get-message', handleNewMessage);
+
+      return () => {
+        socketConnection.off('get-message', handleNewMessage);
+      };
     }
-  }, [socketConnection]);
+  }, [data, socketConnection, userId]);
 
   const sendMessage = () => {
     if (writeMessage.trim()) {
@@ -39,7 +43,6 @@ const ChatBox = ({ data }) => {
         { ...messageData, isSent: true }
       ]);
       socketConnection.emit('new-message', messageData);
-      setWriteMessage('');
     }
   };
 

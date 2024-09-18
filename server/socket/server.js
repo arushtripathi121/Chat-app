@@ -32,7 +32,7 @@ io.on('connection', async (socket) => {
       });
 
       socket.on('new-message', (messageData) => {
-        const { sender, receiver, message } = messageData;
+        const { sender,receiver, message } = messageData;
 
         if (receiver && message) {
           io.to(receiver).emit('get-message', { sender: sender, message });
