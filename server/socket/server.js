@@ -8,6 +8,7 @@ const User = require('../models/userModel');
 const Conversation = require('../models/conversationModel');
 const Message = require('../models/messageModel');
 const { getMessageBySenderAndReceiverId } = require('../helperFunctions/getMessageBySenderAndReceiverId.js');
+const { getUserContact } = require('../helperFunctions/getUserContacts.js');
 
 
 const server = http.createServer(app);
@@ -19,6 +20,7 @@ const io = new Server(server, {
 });
 
 const onlineUsers = new Set();
+const contacts = new Set();
 
 io.on('connection', async (socket) => {
   try {
@@ -29,12 +31,9 @@ io.on('connection', async (socket) => {
       socket.join(user._id);
       onlineUsers.add(user._id);
 
-      socket.on('get-contacts', (data) => {
-        console.log('Received get-contacts from:', data.id);
-        socket.emit('contactsResponse', { message: 'Contacts fetched successfully' });
-    });
-    
-    
+      const contactData = await getUserContact(user._id);
+
+      io.emit('contactResponse', contactData)
 
       io.emit('onlineUser', Array.from(onlineUsers));
 
@@ -70,6 +69,7 @@ io.on('connection', async (socket) => {
             }
           }
           io.to(receiver).emit('get-message', { sender: sender, message });
+          io.emit('contactResponse', contactData)
         }
         catch (e) {
           console.log(e);

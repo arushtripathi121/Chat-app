@@ -23,6 +23,8 @@ const HomePage = () => {
   const userId = localStorage.getItem('_id');
   const [activeSection, setActiveSection] = useState('search');
   const isMobileView = window.innerWidth < 1024;
+  const [responseData, setResponseData] = useState([]);
+  const socketConnection = useSelector(state => state?.user?.socketConnection);
 
   const setChatData = (data) => {
     setCurrentUserChatData(data);
@@ -60,38 +62,44 @@ const HomePage = () => {
   }, [])
 
   useEffect(() => {
+    const item = localStorage.getItem('token-data');
+    const userId = localStorage.getItem('_id');
+
+    if (!item || !userId) {
+      navigate('/login');
+      return;
+    }
+    setToken(item);
+
     const socketIoConnection = io('http://localhost:5000', {
       auth: {
-        token: localStorage.getItem('token-data'),
+        token: item,
       },
     });
-  
+
     dispatch(setSocketConnection(socketIoConnection));
-  
+
     socketIoConnection.on('onlineUser', (data) => {
       dispatch(setOnlineUser(data));
     });
-  
-    const fetchContacts = (userId) => {
-      const data = { id: userId };
-      socketIoConnection.emit('get-contacts', data);
-  
-      socketIoConnection.on('contactResponse', (responseData) => {
-        console.log(responseData);
-      });
-    };
-  
-    if (userId) {
-      fetchContacts(userId);
-    }
-  
+
     return () => {
       socketIoConnection.disconnect();
     };
-  }, []);
-  
-  
-  
+  }, [dispatch, navigate]);
+
+  useEffect(() => {
+    if (socketConnection) {
+      socketConnection.on('contactResponse', (responseData) => {
+        setResponseData(responseData);
+      });
+    }
+  }, [socketConnection]);
+
+
+
+
+
   return (
     <main className='flex w-full h-screen font-poppins'>
       <nav className='w-[60px] md:w-[80px] bg-gray-200 flex flex-col items-center gap-6 pt-5'>
@@ -143,6 +151,11 @@ const HomePage = () => {
           activeSection === 'search' ? (
             <section className='w-full h-full flex flex-col bg-gray-100'>
               <Search setUserData={setChatData} />
+              <div className='flex-grow overflow-y-auto'>
+                {responseData && responseData.map((m, index) => (
+                  <ContactComponent key={index} data={m} />
+                ))}
+              </div>
             </section>
           ) : (
             <section className='w-full h-full bg-white flex flex-col'>
@@ -152,21 +165,26 @@ const HomePage = () => {
                   onClick={() => setActiveSection('search')}
                 />
               </div>
-              <ChatBox data={currentUserChatData} />
+              <ChatBox data={currentUserChatData} className='flex-grow overflow-y-auto' />
             </section>
           )
         ) : (
           <>
-            <section className='flex flex-col w-3/12 lg:w-1/4 flex-grow px-1 border border-orange-200 shadow-lg shadow-orange-200 rounded-xl h-full'>
+            <section className='flex flex-col w-3/12 lg:w-1/4 flex-grow h-full border border-orange-200 shadow-lg shadow-orange-200 rounded-xl'>
               <Search setUserData={setChatData} />
-              <div className='flex-grow overflow-y-auto p-4'></div>
+              <div className='flex-grow overflow-y-auto'>
+                {responseData && responseData.map((m, index) => (
+                  <ContactComponent key={index} data={m} />
+                ))}
+              </div>
             </section>
             <section className='hidden lg:block flex-grow bg-white rounded-2xl w-9/12 lg:w-3/4 h-full'>
-              <ChatBox data={currentUserChatData} />
+              <ChatBox data={currentUserChatData} className='flex-grow overflow-y-auto' />
             </section>
           </>
         )}
       </main>
+
       {showProfile && (
         <div className='fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'>
           <ProfileComponent profile={handleProfile} />
