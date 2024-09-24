@@ -8,7 +8,7 @@ import ProfileComponent from '../components/ProfileComponent';
 import ChatBox from '../components/ChatBox';
 import Search from '../components/Search';
 import io from 'socket.io-client'
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setOnlineUser, setSocketConnection } from '../redux/userSlice';
 
 const HomePage = () => {
@@ -20,6 +20,7 @@ const HomePage = () => {
   const [currentUserChatData, setCurrentUserChatData] = useState(null);
   const [token, setToken] = useState('');
   const dispatch = useDispatch();
+  const userId = localStorage.getItem('_id');
   const [activeSection, setActiveSection] = useState('search');
   const isMobileView = window.innerWidth < 1024;
 
@@ -62,20 +63,35 @@ const HomePage = () => {
     const socketIoConnection = io('http://localhost:5000', {
       auth: {
         token: localStorage.getItem('token-data'),
-      }
-    })
-
+      },
+    });
+  
     dispatch(setSocketConnection(socketIoConnection));
-
+  
     socketIoConnection.on('onlineUser', (data) => {
       dispatch(setOnlineUser(data));
-    })
-
+    });
+  
+    const fetchContacts = (userId) => {
+      const data = { id: userId };
+      socketIoConnection.emit('get-contacts', data);
+  
+      socketIoConnection.on('contactResponse', (responseData) => {
+        console.log(responseData);
+      });
+    };
+  
+    if (userId) {
+      fetchContacts(userId);
+    }
+  
     return () => {
       socketIoConnection.disconnect();
-    }
-  }, [])
-
+    };
+  }, []);
+  
+  
+  
   return (
     <main className='flex w-full h-screen font-poppins'>
       <nav className='w-[60px] md:w-[80px] bg-gray-200 flex flex-col items-center gap-6 pt-5'>

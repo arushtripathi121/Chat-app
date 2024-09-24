@@ -28,9 +28,16 @@ io.on('connection', async (socket) => {
     if (user?._id) {
       socket.join(user._id);
       onlineUsers.add(user._id);
+
+      socket.on('get-contacts', (data) => {
+        console.log('Received get-contacts from:', data.id);
+        socket.emit('contactsResponse', { message: 'Contacts fetched successfully' });
+    });
+    
+    
+
       io.emit('onlineUser', Array.from(onlineUsers));
 
-      
       socket.on('join-chat', async (data) => {
         const userDetails = await User.findById(data.userId);
         if (userDetails) {
