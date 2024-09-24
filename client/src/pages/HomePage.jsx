@@ -9,6 +9,7 @@ import ChatBox from '../components/ChatBox';
 import Search from '../components/Search';
 import io from 'socket.io-client';
 import { useDispatch, useSelector } from 'react-redux';
+import { serverApi } from '../constants/api'
 import { setOnlineUser, setSocketConnection, setContactList } from '../redux/userSlice';
 
 const HomePage = () => {
@@ -30,7 +31,7 @@ const HomePage = () => {
   };
 
   const handleLogout = async () => {
-    const data = await fetch('http://localhost:5000/logout', {
+    const data = await fetch(`${serverApi}logout`, {
       method: 'GET',
     });
 
@@ -69,7 +70,7 @@ const HomePage = () => {
     }
     setToken(item);
 
-    const socketIoConnection = io('http://localhost:5000', {
+    const socketIoConnection = io(serverApi, {
       auth: {
         token: item,
       },

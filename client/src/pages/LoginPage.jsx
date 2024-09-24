@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import Header from '../components/Header'
 import { useNavigate } from 'react-router-dom';
+import { serverApi } from '../constants/api'
 
 const LoginPage = () => {
 
@@ -9,7 +10,7 @@ const LoginPage = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
   const login = async () => {
-    const data = await fetch('http://localhost:5000/login', {
+    const data = await fetch(`${serverApi}login`, {
       method: 'POST',
       headers: {
         "Content-Type": "application/json",

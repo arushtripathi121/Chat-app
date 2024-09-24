@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useSyncExternalStore } from 'react'
 import Header from '../components/Header'
 import { useNavigate } from 'react-router-dom';
+import { serverApi } from '../constants/api'
 
 const SignUpPage = () => {
 
@@ -14,7 +15,7 @@ const SignUpPage = () => {
   const navigate = useNavigate();
 
   const signUp = async () => {
-    const data = await fetch(`http://localhost:5000/signup`, {
+    const data = await fetch(`${serverApi}signup`, {
       method: 'POST',
       headers: {
         "Content-Type": "application/json"
