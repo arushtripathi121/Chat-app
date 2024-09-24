@@ -10,7 +10,6 @@ const Message = require('../models/messageModel');
 const { getMessageBySenderAndReceiverId } = require('../helperFunctions/getMessageBySenderAndReceiverId.js');
 const { getUserContact } = require('../helperFunctions/getUserContacts.js');
 
-
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
@@ -20,7 +19,6 @@ const io = new Server(server, {
 });
 
 const onlineUsers = new Set();
-const contacts = new Set();
 
 io.on('connection', async (socket) => {
   try {
@@ -32,8 +30,7 @@ io.on('connection', async (socket) => {
       onlineUsers.add(user._id);
 
       const contactData = await getUserContact(user._id);
-
-      io.emit('contactResponse', contactData)
+      socket.emit('contactResponse', contactData);
 
       io.emit('onlineUser', Array.from(onlineUsers));
 
@@ -43,38 +40,43 @@ io.on('connection', async (socket) => {
           socket.join(userDetails._id);
           const loadChats = await getMessageBySenderAndReceiverId(data.userId, data.receiverId);
           io.to(userDetails._id).emit('loaded-chats', loadChats);
+
+          const contactData = await getUserContact(userDetails._id);
+          io.to(userDetails._id).emit('contactResponse', contactData);
         }
       });
-      
-
 
       socket.on('new-message', async (messageData) => {
-
         const { sender, receiver, message } = messageData;
 
         try {
           if (receiver && message) {
-            const messageDetails = await Message.create({ text: message, sendBy: sender })
+            const messageDetails = await Message.create({ text: message, sendBy: sender });
             const conversation = await Conversation.findOne({
               $and: [
                 { sender },
                 { receiver }
               ]
-            })
+            });
+
             if (!conversation) {
               await Conversation.create({ receiver, sender, messages: messageDetails._id });
             } else {
               await Conversation.findByIdAndUpdate(conversation._id,
                 { $push: { messages: messageDetails._id } }, { new: true });
             }
+
+            io.to(receiver).emit('get-message', { sender, message });
+
+            const senderContactData = await getUserContact(sender);
+            io.to(sender).emit('contactResponse', senderContactData);
+
+            const receiverContactData = await getUserContact(receiver);
+            io.to(receiver).emit('contactResponse', receiverContactData);
           }
-          io.to(receiver).emit('get-message', { sender: sender, message });
-          io.emit('contactResponse', contactData)
-        }
-        catch (e) {
+        } catch (e) {
           console.log(e);
         }
-
       });
 
       socket.on('disconnect', () => {
