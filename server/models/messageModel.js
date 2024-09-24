@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const User = require('./userModel');
 
 const messageSchema = new mongoose.Schema({
     text: {
@@ -10,6 +11,11 @@ const messageSchema = new mongoose.Schema({
     },
     videoUrl: {
         type: String,
+    },
+    sendBy: {
+        type: mongoose.Schema.ObjectId,
+        ref: User,
+        required: true,
     },
     seen: {
         type: Boolean,

@@ -9,10 +9,29 @@ const ChatBox = ({ data }) => {
   const [messages, setMessages] = useState([]);
   const [writeMessage, setWriteMessage] = useState('');
   const userId = localStorage.getItem('_id');
+  const [loadingPreviousMessages, setLoadingPreviousMessage] = useState(true);
 
   useEffect(() => {
-    if (socketConnection) {
-      socketConnection.emit('join-chat', data?._id);
+    if (socketConnection && data?._id) {
+      const loadData = {
+        userId: userId,
+        receiverId: data._id
+      }
+      socketConnection.emit('join-chat', loadData);
+
+      socketConnection.on('loaded-chats', (lodedMessages) => {
+        setLoadingPreviousMessage(true);
+        setMessages(Array.isArray(lodedMessages) ? lodedMessages.map(m => {
+          return {
+            message: m.text,
+            isSent: m.sendBy === userId,
+            receiver: data._id,
+            sender: m.sendBy
+          };
+        }) : []);
+        setLoadingPreviousMessage(false);
+      });
+
 
       const handleNewMessage = (messageData) => {
         if (messageData.receiver === data._id || messageData.sender === data._id) {
@@ -31,6 +50,7 @@ const ChatBox = ({ data }) => {
     }
   }, [data, socketConnection, userId]);
 
+
   const sendMessage = () => {
     if (writeMessage.trim()) {
       const messageData = {
@@ -43,11 +63,12 @@ const ChatBox = ({ data }) => {
         { ...messageData, isSent: true }
       ]);
       socketConnection.emit('new-message', messageData);
+      setWriteMessage('');
     }
   };
 
   return (
-    <main className='flex flex-col h-screen w-full'>
+    <main className='flex flex-col h-screen w-full bg-homeChat'>
       {data ? (
         <div className='flex flex-col h-full w-full'>
           <section className='flex items-center border border-gray-300 rounded-lg shadow-md bg-orange-100 px-5 py-3 w-full'>
@@ -65,17 +86,22 @@ const ChatBox = ({ data }) => {
             </div>
           </section>
 
-          <section className='flex-grow overflow-y-auto bg-gray-100 p-4 w-full'>
-            {messages.map((msg, index) => (
-              <div key={index} className={`flex ${msg.isSent ? 'justify-end' : 'justify-start'} mb-2`}>
-                <p className={`p-2 rounded-lg max-w-xs shadow ${msg.isSent ? 'bg-green-500 text-white' : 'bg-white text-black'}`}>
-                  {msg.message}
-                </p>
-              </div>
-            ))}
-          </section>
+          {!loadingPreviousMessages ? (
+            <section className='flex-grow overflow-y-auto p-6 w-full rounded-lg shadow-lg'>
+              {messages && messages.map((msg, index) => (
+                <div key={index} className={`flex ${msg.isSent ? 'justify-end' : 'justify-start'} mb-4`}>
+                  <p className={`p-3 rounded-lg max-w-xs shadow-md transition-all duration-300 ease-in-out transform ${msg.isSent ? 'bg-green-500 text-white hover:scale-105' : 'bg-white text-black border border-gray-300 hover:shadow-lg'}`}>
+                    {msg.message}
+                  </p>
+                </div>
+              ))}
+            </section>
+          ) : (
+            <p className='w-full h-full text-center text-lg font-semibold text-gray-700'>Loading messages...</p>
+          )}
 
-          <section className='bg-gray-50 border-t border-gray-200 p-4 flex items-center w-full'>
+
+          <section className='p-4 flex items-center w-full'>
             <input
               type='text'
               value={writeMessage}
@@ -107,3 +133,4 @@ const ChatBox = ({ data }) => {
 };
 
 export default ChatBox;
+
