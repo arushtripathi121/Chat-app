@@ -1,6 +1,5 @@
 const User = require('../models/userModel');
 const bcrypt = require('bcrypt');
-const { profile } = require('console');
 const jwt = require('jsonwebtoken')
 require('dotenv').config();
 const cloudinary = require('cloudinary').v2;
@@ -103,7 +102,8 @@ exports.loginUser = async (req, res) => {
             _id: user._id,
         }
 
-        const token = await jwt.sign(payload, process.env.JWT_SECRET, {
+        const secret = process.env.JWT_SECRET;
+        const token = await jwt.sign(payload, secret, {
             expiresIn: '1d'
         });
 

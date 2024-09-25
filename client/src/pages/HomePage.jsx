@@ -9,7 +9,7 @@ import ChatBox from '../components/ChatBox';
 import Search from '../components/Search';
 import io from 'socket.io-client';
 import { useDispatch, useSelector } from 'react-redux';
-import { serverApi } from '../constants/api'
+import  serverApi  from '../constants/api'
 import { setOnlineUser, setSocketConnection, setContactList } from '../redux/userSlice';
 
 const HomePage = () => {

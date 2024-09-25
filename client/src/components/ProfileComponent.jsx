@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import profile_pic from '../assets/user.png'
 import { IoMdClose } from "react-icons/io";
 import { AiOutlineEdit, AiOutlineMail, AiOutlineSave, AiOutlineUpload, AiOutlineUser } from 'react-icons/ai';
+import serverApi from '../constants/api';
 
 const ProfileComponent = ({ profile }) => {
 
@@ -32,7 +33,7 @@ const ProfileComponent = ({ profile }) => {
         formData.append('image', uploadImage);
         formData.append('_id', _id);
         try {
-            const data = await fetch('http://localhost:5000/updateUserProfilePicture', {
+            const data = await fetch(`${serverApi}updateUserProfilePicture`, {
                 method: 'POST',
                 body: formData,
             });
@@ -53,7 +54,7 @@ const ProfileComponent = ({ profile }) => {
 
 
     const getUserDetails = async () => {
-        const res = await fetch('http://localhost:5000/getUserDetails', {
+        const res = await fetch(`${serverApi}getUserDetails`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -67,7 +68,7 @@ const ProfileComponent = ({ profile }) => {
     }
 
     const updateUserDetails = async () => {
-        const res = await fetch('http://localhost:5000/updateUser', {
+        const res = await fetch(`${serverApi}updateUser`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

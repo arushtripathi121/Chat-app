@@ -1,5 +1,5 @@
 import React from 'react';
-import ContactComponentImage from '../assets/chatBoxPhoto.jpeg';
+import ContactComponentImage from '../assets/ChatBoxPhoto.jpeg';
 
 const ContactComponent = ({ data, setUserData }) => {
 
