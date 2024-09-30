@@ -65,6 +65,7 @@ const ProfileComponent = ({ profile }) => {
         setUserData(data.userData);
         setName(data.userData.name);
         setId(data.userData._id);
+        console.log(data.userData);
     }
 
     const updateUserDetails = async () => {

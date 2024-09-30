@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import profile_pic from '../assets/user.png';
 import { IoMdClose } from 'react-icons/io';
 import { useSelector } from 'react-redux';
+import serverApi from '../constants/api';
 
 const Search = ({ setUserData }) => {
     const [query, setQuery] = useState('');
@@ -10,7 +11,7 @@ const Search = ({ setUserData }) => {
     const _id = localStorage.getItem('_id');
 
     const search = async () => {
-        const res = await fetch('http://localhost:5000/searchUser', {
+        const res = await fetch(`${serverApi}searchUser`, {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json",
